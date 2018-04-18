@@ -1,3 +1,3 @@
 # machineLearningCourse
 
-Code about using machine learning algorithms (from a udemy course)
+Code about implementing machine learning algorithms to a dataset (from a udemy course)
