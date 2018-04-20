@@ -62,19 +62,115 @@ y = dataset.iloc[:, 4].values
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder_X = LabelEncoder()
 X[:, 3] = labelencoder_X.fit_transform(X[:, 3]) #now i encoded the country column
-onehotencoder = OneHotEncoder(categorical_features=[0])
+onehotencoder = OneHotEncoder(categorical_features=[3])
 X = onehotencoder.fit_transform(X).toarray() #fit transform to dataset
 
+#avoiding the dummy variable trap
+X = X[:, 1:] #I remove the first column. python library for linear regression already takes care of that
 
 # Splitting the dataset into the Training set and Test set
 from sklearn.cross_validation import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
 
-# Feature Scaling
-"""from sklearn.preprocessing import StandardScaler
-sc_X = StandardScaler()
-X_train = sc_X.fit_transform(X_train)
-X_test = sc_X.transform(X_test)
-sc_y = StandardScaler()
-y_train = sc_y.fit_transform(y_train)"""
+#linear regression library also does scaling, so we won't need that either
+
+#fitting multiple linear regression to trining test
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+#predicting the test set results
+y_pred = regressor.predict(X_test)
+
+#this plot would be 5-dimentional so we won't plot it here
+
+#With this model we used all variables. We could use less with:
+#Backward Elimination
+import statsmodels.formula.api as sm
+#the constant of the multiple regression equation actually is multiplied with x0=1. I have to include that to the code because the library dosn't include it
+X = np.append(arr = np.ones((50, 1)).astype(int), values = X, axis = 1)#we add a column of ones. we also have to make the added column integers. note that this adds the X to ones, not the other way arround
+
+#we will create a new matrix of features that will be the optimal matrix of features
+X_opt = X[:, [0,1,2,3,4,5]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
+#1st - 2nd step: select significance level and fit
+#create a new regressor
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
+#step 3: consider predictor with highest p-value
+regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+
+#we do the same without the third column
+X_opt = X[:, [0,1,3,4,5]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
+regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+
+#we do the same
+X_opt = X[:, [0,3,4,5]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
+regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+
+#we do the same
+X_opt = X[:, [0,3,5]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
+regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+
+#we do the same
+X_opt = X[:, [0,3]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
+regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+
+#This is our model!
+
+
+#a little les manualy solution would be:
+'''import statsmodels.formula.api as sm
+def backwardElimination(x, sl):
+    numVars = len(x[0])
+    for i in range(0, numVars):
+        regressor_OLS = sm.OLS(y, x).fit()
+        maxVar = max(regressor_OLS.pvalues).astype(float)
+        if maxVar > sl:
+            for j in range(0, numVars - i):
+                if (regressor_OLS.pvalues[j].astype(float) == maxVar):
+                    x = np.delete(x, j, 1)
+    regressor_OLS.summary()
+    return x
+ 
+SL = 0.05
+X_opt = X[:, [0, 1, 2, 3, 4, 5]]
+X_Modeled = backwardElimination(X_opt, SL)'''
+
+# with both p-values and adjusted R squeared, just in case p-value~0,05, so I have one more criteria to choose I if I will eliminate the variable or not
+
+'''import statsmodels.formula.api as sm
+def backwardElimination(x, SL):
+    numVars = len(x[0])
+    temp = np.zeros((50,6)).astype(int)
+    for i in range(0, numVars):
+        regressor_OLS = sm.OLS(y, x).fit()
+        maxVar = max(regressor_OLS.pvalues).astype(float)
+        adjR_before = regressor_OLS.rsquared_adj.astype(float)
+        if maxVar > SL:
+            for j in range(0, numVars - i):
+                if (regressor_OLS.pvalues[j].astype(float) == maxVar):
+                    temp[:,j] = x[:, j]
+                    x = np.delete(x, j, 1)
+                    tmp_regressor = sm.OLS(y, x).fit()
+                    adjR_after = tmp_regressor.rsquared_adj.astype(float)
+                    if (adjR_before >= adjR_after):
+                        x_rollback = np.hstack((x, temp[:,[0,j]]))
+                        x_rollback = np.delete(x_rollback, j, 1)
+                        print (regressor_OLS.summary())
+                        return x_rollback
+                    else:
+                        continue
+    regressor_OLS.summary()
+    return x
+ 
+SL = 0.05
+X_opt = X[:, [0, 1, 2, 3, 4, 5]]
+X_Modeled = backwardElimination(X_opt, SL)'''
+
+
+
+
 
