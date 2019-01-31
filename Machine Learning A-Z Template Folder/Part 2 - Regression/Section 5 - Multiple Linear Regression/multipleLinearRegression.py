@@ -84,43 +84,39 @@ regressor.fit(X_train, y_train)
 #predicting the test set results
 y_pred = regressor.predict(X_test)
 
-#this plot would be 5-dimentional so we won't plot it here
 
-#With this model we used all variables. We could use less with:
 #Backward Elimination
 import statsmodels.formula.api as sm
-#the constant of the multiple regression equation actually is multiplied with x0=1. I have to include that to the code because the library dosn't include it
-X = np.append(arr = np.ones((50, 1)).astype(int), values = X, axis = 1)#we add a column of ones. we also have to make the added column integers. note that this adds the X to ones, not the other way arround
+X = np.append(arr = np.ones((50, 1)).astype(int), values = X, axis = 1)#the constant of 
+#the multiple regression equation actually is multiplied with x0=1 and I have to include
+# that to the code
 
-#we will create a new matrix of features that will be the optimal matrix of features
-X_opt = X[:, [0,1,2,3,4,5]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
+# optimal matrix of features - variables of high impact on the profit
+X_opt = X[:, [0,1,2,3,4,5]]#initialize the features and remove them one by one
 #1st - 2nd step: select significance level and fit
-#create a new regressor
-regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()
 #step 3: consider predictor with highest p-value
-regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+regressor_OLS.summary()
 
-#we do the same without the third column
-X_opt = X[:, [0,1,3,4,5]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
-regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
-regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+#same, without the third column
+X_opt = X[:, [0,1,3,4,5]]
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()
+regressor_OLS.summary()
 
-#we do the same
-X_opt = X[:, [0,3,4,5]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
-regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
-regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+#same
+X_opt = X[:, [0,3,4,5]]
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()
+regressor_OLS.summary()
 
-#we do the same
-X_opt = X[:, [0,3,5]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
-regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
-regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
+#same
+X_opt = X[:, [0,3,5]]
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()
+regressor_OLS.summary()
 
-#we do the same
-X_opt = X[:, [0,3]]#we will initialize the features and we will remove them ine by one (the ones that are statistically more useeless)
-regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()#regresson object from the OSL class
-regressor_OLS.summary()#this shoes the p values. so we remove the predictor with the highest p-value
-
-#This is our model!
+#same
+X_opt = X[:, [0,3]]
+regressor_OLS = sm.OLS(endog = y, exog = X_opt).fit()
+regressor_OLS.summary()
 
 
 #a little les manualy solution would be:
