@@ -18,50 +18,53 @@ Created on Thu Apr 19 16:34:05 2018
 # 2-4 ---> stepwise regression
 
 #Step by step
-#1.--> cases: Prior Knowledge; OR
+#1. All-in --> cases: Prior Knowledge; OR
 #             You have to; OR, for example according to framework of the company
 #             Preparing for Backward Elimination
 
-#2.--> step 1. :Select a significance level to stay in the model, SL = 0.05
+#2. Backward Elimination -->
+#       step 1. :Select a significance level to stay in the model, SL = 0.05
 #      step 2. : fit the model to possible predictors
 #      step 3. : Consider the predictor with the highest p-value. If P>SL, go to step 4, otherwise go to FIN
 #      step 4. : Remove the predictor
 #      step 5. : Fit model without this variable (go to 3)
 #Fin => model ready
 
-#3. --> step 1. :  Select a significance level to stay in the model, SL = 0.05
+#3. Forward Elimination -->
+#        step 1. :  Select a significance level to stay in the model, SL = 0.05
 #      step 2. : Fit all simple regression models y~xn select the one with the lowesr P-value
 #      step 3. : keep this variable and fill all possible with one extra predictor added to the ones you already have
 #      step 4. : consider the predictor with the lowest P-value. if P<SL, go to step 3, otherwise go to FIN(keep the previous model)
 
-#4.--> step 1. : step 1: select a significance level to enter to stay in the model e.g.: SLENTER = 0.05, SLSTAY = 0.05
+#4. Bidirectional Elimination -->
+#       step 1. : step 1: select a significance level to enter to stay in the model e.g.: SLENTER = 0.05, SLSTAY = 0.05
 #      step 2. : Perform the next step of Forward Selection (new variables must have: P<SLENTED to enter)
 #      step 3. : Perform ALL steps of Backward Elimination (old variables must have P<SLSTAY to stay)
 #      step 4. : No new variables can enter and no old variables can exit
 #=> FIN: your model is ready
 
-#5.--> step 1. : Select a criterion of goodness of fit (e.g. Akaike criterion)
+#5.Score Comparison -->
+#       step 1. : Select a criterion of goodness of fit (e.g. Akaike criterion)
 #      step 2. : Construct All Possible Regression Models: 2^N -1 total combinations
 #      step 3. : Select the one with best criterion
 # FIN => Your model is ready. Example: 10 columns means 1,023 models
 
 
-# Importing the libraries
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
 # Importing the dataset
-dataset = pd.read_csv('50_Startups.csv')
+dataset = pd.read_csv('C:/Users/Maria/Documents/MyCodes/Machine Learning Course/Machine Learning A-Z Template Folder/Part 2 - Regression/Section 5 - Multiple Linear Regression/50_Startups.csv')
 X = dataset.iloc[:, :-1].values
 y = dataset.iloc[:, 4].values
 
 
-#we have categorical variables--> label encoder and onehat encoder
-#encoding categorical data and
+#encoding categorical data
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder_X = LabelEncoder()
-X[:, 3] = labelencoder_X.fit_transform(X[:, 3]) #now i encoded the country column
+X[:, 3] = labelencoder_X.fit_transform(X[:, 3])
 onehotencoder = OneHotEncoder(categorical_features=[3])
 X = onehotencoder.fit_transform(X).toarray() #fit transform to dataset
 
@@ -72,7 +75,6 @@ X = X[:, 1:] #I remove the first column. python library for linear regression al
 from sklearn.cross_validation import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
 
-#linear regression library also does scaling, so we won't need that either
 
 #fitting multiple linear regression to trining test
 from sklearn.linear_model import LinearRegression
