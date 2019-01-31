@@ -46,8 +46,7 @@ plt.xlabel("Position Level")
 plt.ylabel('Salary')
 plt.show()
 
-#We have straight lines between each level
-#so for higher resolution we create 
+#for a smoother curve
 X_grid = np.arange(min(X), max(X), 0.1)
 X_grid = X_grid.reshape((len(X_grid),1))
 plt.scatter(X, y, color = "red")
