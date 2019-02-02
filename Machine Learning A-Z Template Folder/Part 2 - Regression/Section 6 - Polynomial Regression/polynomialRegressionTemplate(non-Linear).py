@@ -31,9 +31,9 @@ X_test = sc_X.transform(X_test)
 sc_y = StandardScaler()
 y_train = sc_y.fit_transform(y_train)"""
 
-#fitting the non-linear Regression model to the dataset
-#we won't have to create linear regressor because most datasets are not linear
-'''regressor = non_linear_class_or_something()'''
+#Fitting the Regression Model to the dataset
+#Create your regressor here
+
 
 #Predicting a new result with Polynomial Regression
 y_pred = regressor.predict(6.5)
