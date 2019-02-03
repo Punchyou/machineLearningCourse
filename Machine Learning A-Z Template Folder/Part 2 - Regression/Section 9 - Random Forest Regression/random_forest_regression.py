@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Feb  2 10:25:30 2019
+Created on Sun Feb  3 13:31:51 2019
 
 @author: Maria
 """
-#Decision Tree Regression model (non-linear, not continious)
 
-# Importing the libraries
+#Random Forest Regression model
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.tree import DecisionTreeRegressor
-
+from sklearn.ensemble import RandomForestRegressor
 
 # Importing the dataset
-dataset = pd.read_csv('C:/Users/Maria/Downloads/MyCodes/Machine Learning Course/Machine Learning A-Z Template Folder/Part 2 - Regression/Section 7 - Support Vector Regression (SVR)/Position_Salaries.csv')
+dataset = pd.read_csv('C:/Users/Maria/Documents/MyCodes/Machine Learning Course/Machine Learning A-Z Template Folder/Part 2 - Regression/Section 7 - Support Vector Regression (SVR)/Position_Salaries.csv')
 X = dataset.iloc[:, 1:2].values
 y = dataset.iloc[:, 2].values
 
@@ -30,27 +28,28 @@ X_test = sc_X.transform(X_test)
 sc_y = StandardScaler()
 y_train = sc_y.fit_transform(y_train)"""
 
-# Fitting the Decision Tree Model to the dataset
-regressor = DecisionTreeRegressor(random_state=0)
+# Fitting the Random Forest Regression Model to the dataset
+regressor = RandomForestRegressor(n_estimators = 300, random_state = 0)
 regressor.fit(X, y)
+
 
 # Predicting a new result
 y_pred = regressor.predict(6.5)
 
-# Visualising the Decision Tree results
+# Visualising the Random Forest Regression results
 plt.scatter(X, y, color = 'red')
 plt.plot(X, regressor.predict(X), color = 'blue')
-plt.title('Truth or Bluff (Decision Tree)')
+plt.title('Truth or Bluff (Random Forest Regression)')
 plt.xlabel('Position level')
 plt.ylabel('Salary')
 plt.show()
 
-# Visualising the Decision Tree results (for higher resolution and smoother curve)
+# Visualising the Regression results (for higher resolution and smoother curve)
 X_grid = np.arange(min(X), max(X), 0.01)
 X_grid = X_grid.reshape((len(X_grid), 1))
 plt.scatter(X, y, color = 'red')
 plt.plot(X_grid, regressor.predict(X_grid), color = 'blue')
-plt.title('Truth or Bluff (Decision Tree)')
+plt.title('Truth or Bluff (Random Forest Regression)')
 plt.xlabel('Position level')
 plt.ylabel('Salary')
 plt.show()
